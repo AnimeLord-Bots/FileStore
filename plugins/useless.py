@@ -94,9 +94,9 @@ async def check_delete_time(client: Bot, message: Message):
 @Bot.on_message(filters.command('fsettings') & filters.user(OWNER_ID))
 async def file_settings(client: Bot, message: Message):
     user_id = message.from_user.id
-    protect_content = await db.get_protect_content(user_id)
-    hide_caption = await db.get_hide_caption(user_id)
-    channel_button = await db.get_channel_button(user_id)
+    protect_content = await get_protect_content(client, message)  # Await the async function
+    hide_caption = await get_hide_caption(client, message)       # Await the async function
+    channel_button = await get_channel_button(client, message)   # Await the async function
 
     text = (
         "<b>FILES RELATED SETTINGS:</b>\n\n"
@@ -117,9 +117,9 @@ async def file_settings(client: Bot, message: Message):
     await message.reply_text(
         text=text,
         reply_markup=InlineKeyboardMarkup(buttons),
-        parse_mode=ParseMode.HTML,  # Changed from "html" to ParseMode.HTML
-        protect_content=get_protect_content(client, message),
-        disable_web_page_preview=get_hide_caption(client, message)
+        parse_mode=ParseMode.HTML,
+        protect_content=protect_content,
+        disable_web_page_preview=hide_caption
     )
 
 @Bot.on_callback_query(filters.regex(r"^fset_"))
