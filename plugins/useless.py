@@ -117,7 +117,7 @@ async def file_settings(client: Bot, message: Message):
     await message.reply_text(
         text=text,
         reply_markup=InlineKeyboardMarkup(buttons),
-        parse_mode="html",
+        parse_mode=ParseMode.HTML,  # Changed from "html" to ParseMode.HTML
         protect_content=get_protect_content(client, message),
         disable_web_page_preview=get_hide_caption(client, message)
     )
@@ -163,4 +163,3 @@ async def fsettings_callback(client: Bot, query: CallbackQuery):
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-#
