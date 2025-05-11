@@ -9,9 +9,9 @@ from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
 from config import *
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
-from shortzy import Shortzy
 from pyrogram.errors import FloodWait
 from database.database import *
+from shortzy import Shortzy
 
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
@@ -22,17 +22,15 @@ from database.database import *
 #
 # All rights reserved.
 
-
-#used for cheking if a user is admin ~Owner also treated as admin level
+# Used for checking if a user is admin ~Owner also treated as admin level
 async def check_admin(filter, client, update):
     try:
         user_id = update.from_user.id       
-        return any([user_id == OWNER_ID, await db.admin_exist(user_id)])
+        return user_id == OWNER_ID or await db.admin_exist(user_id)
     except Exception as e:
         print(f"! Exception in check_admin: {e}")
         return False
 
-
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
 #
@@ -41,7 +39,6 @@ async def check_admin(filter, client, update):
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-
 
 async def is_subscribed(client, user_id):
     channel_ids = await db.show_channels()
@@ -64,7 +61,6 @@ async def is_subscribed(client, user_id):
 
     return True
 
-
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
 #
@@ -73,7 +69,6 @@ async def is_subscribed(client, user_id):
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-
 
 async def is_sub(client, user_id, channel_id):
     try:
@@ -85,7 +80,6 @@ async def is_sub(client, user_id, channel_id):
             ChatMemberStatus.ADMINISTRATOR,
             ChatMemberStatus.MEMBER
         }
-
     except UserNotParticipant:
         mode = await db.get_channel_mode(channel_id)
         if mode == "on":
@@ -94,7 +88,6 @@ async def is_sub(client, user_id, channel_id):
             return exists
         #print(f"[NOT SUB] User {user_id} not in {channel_id} and mode != on")
         return False
-
     except Exception as e:
         print(f"[!] ᴇʀʀᴏʀ ɪɴ ɪꜱ_ꜱᴜʙ(): {e}")
         return False
@@ -107,8 +100,6 @@ async def is_sub(client, user_id, channel_id):
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-
-
 
 async def encode(string):
     string_bytes = string.encode("ascii")
@@ -155,7 +146,7 @@ async def get_message_id(client, message):
         return 0
     elif message.text:
         pattern = r"https://t.me/(?:c/)?(.*)/(\d+)"
-        matches = re.match(pattern,message.text)
+        matches = re.match(pattern, message.text)
         if not matches:
             return 0
         channel_id = matches.group(1)
@@ -168,7 +159,6 @@ async def get_message_id(client, message):
                 return msg_id
     else:
         return 0
-
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -191,7 +181,6 @@ def get_readable_time(seconds: int) -> str:
     up_time += ":".join(time_list)
     return up_time
 
-
 def get_exp_time(seconds):
     periods = [('days', 86400), ('hours', 3600), ('mins', 60), ('secs', 1)]
     result = ''
@@ -210,34 +199,30 @@ def get_exp_time(seconds):
 #
 # All rights reserved.
 
-
 async def get_shortlink(url, api, link):
     shortzy = Shortzy(api_key=api, base_site=url)
     link = await shortzy.convert(link)
     return link
 
-
 subscribed = filters.create(is_subscribed)
-admin = filters.create(check_admin)
 
 def get_protect_content(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = user_id in admin or user_id == OWNER_ID
+    is_admin = check_admin(None, client, message)  # Call check_admin directly
     protect_content = db.get_protect_content(user_id)
     return False if is_admin else protect_content
 
 def get_hide_caption(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = user_id in admin or user_id == OWNER_ID
+    is_admin = check_admin(None, client, message)  # Call check_admin directly
     hide_caption = db.get_hide_caption(user_id)
     return False if is_admin else hide_caption
 
 def get_channel_button(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = user_id in admin or user_id == OWNER_ID
+    is_admin = check_admin(None, client, message)  # Call check_admin directly
     channel_button = db.get_channel_button(user_id)
     return False if is_admin else channel_button
-
 
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
