@@ -13,6 +13,7 @@ from os import environ, getenv
 import logging
 from logging.handlers import RotatingFileHandler
 from pyrogram import filters
+from database.database import db  # Added this line
 
 # MehediYT69
 # --------------------------------------------
@@ -161,7 +162,6 @@ async def admin_filter(_, __, message):
 
 admin = filters.create(admin_filter)
 
-
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
 #
@@ -170,4 +170,3 @@ admin = filters.create(admin_filter)
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-#
