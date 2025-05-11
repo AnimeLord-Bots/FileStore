@@ -9,10 +9,14 @@
 
 import motor.motor_asyncio
 import logging
-from config import DB_URI, DB_NAME
+import os  # Added for environment variable access
 from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
+
+# Remove dependency on config.py
+DB_URI = os.environ.get("DATABASE_URL", "")
+DB_NAME = os.environ.get("DATABASE_NAME", "animelord")
 
 default_verify = {
     'is_verified': False,
@@ -22,9 +26,9 @@ default_verify = {
 }
 
 class Mehedi:
-    def __init__(self, DB_URI, DB_NAME):
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(DB_URI)
-        self.db = self.client[DB_NAME]
+    def __init__(self, db_uri, db_name):
+        self.client = motor.motor_asyncio.AsyncIOMotorClient(db_uri)
+        self.db = self.client[db_name]
         self.channel_data = self.db['channels']
         self.admins_data = self.db['admins']
         self.user_data = self.db['users']
@@ -236,6 +240,7 @@ class Mehedi:
         user_data = await self.user_data.find_one({'_id': user_id})
         return user_data.get('channel_button', False) if user_data else False
 
+# Initialize Mehedi with environment variables
 db = Mehedi(DB_URI, DB_NAME)
 
 #
@@ -246,4 +251,3 @@ db = Mehedi(DB_URI, DB_NAME)
 # Please see < https://github.com/AnimeLord-Bots/FileStore/blob/master/LICENSE >
 #
 # All rights reserved.
-#
