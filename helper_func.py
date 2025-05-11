@@ -9,9 +9,9 @@ from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
 from config import *
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
+from shortzy import Shortzy
 from pyrogram.errors import FloodWait
 from database.database import *
-from shortzy import Shortzy
 
 #
 # Copyright (C) 2025 by AnimeLord-Bots@Github, < https://github.com/AnimeLord-Bots >.
@@ -206,22 +206,23 @@ async def get_shortlink(url, api, link):
 
 subscribed = filters.create(is_subscribed)
 
-def get_protect_content(client, message) -> bool:
+# Updated async functions with proper await
+async def get_protect_content(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = check_admin(None, client, message)  # Call check_admin directly
-    protect_content = db.get_protect_content(user_id)
+    is_admin = await check_admin(None, client, message)  # Await the async function
+    protect_content = await db.get_protect_content(user_id)  # Await the async method
     return False if is_admin else protect_content
 
-def get_hide_caption(client, message) -> bool:
+async def get_hide_caption(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = check_admin(None, client, message)  # Call check_admin directly
-    hide_caption = db.get_hide_caption(user_id)
+    is_admin = await check_admin(None, client, message)  # Await the async function
+    hide_caption = await db.get_hide_caption(user_id)  # Await the async method
     return False if is_admin else hide_caption
 
-def get_channel_button(client, message) -> bool:
+async def get_channel_button(client, message) -> bool:
     user_id = message.from_user.id
-    is_admin = check_admin(None, client, message)  # Call check_admin directly
-    channel_button = db.get_channel_button(user_id)
+    is_admin = await check_admin(None, client, message)  # Await the async function
+    channel_button = await db.get_channel_button(user_id)  # Await the async method
     return False if is_admin else channel_button
 
 #
